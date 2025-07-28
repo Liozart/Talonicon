@@ -361,3 +361,22 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/.vsconfig
+/Assembly-CSharp-Editor.csproj
+/Assembly-CSharp.csproj
+/Build
+/DamageNumbersPro.csproj
+/Library
+/ProjectSettings
+/Talonicon.sln
+/Temp
+/UserSettings
+/Assets/Animations
+/Assets/Prefabs
+/Assets/Scenes
+/Assets/Settings
+/Assets/Sounds
+/Assets/Sprites
+/Assets/StarterAssets
+/Assets/TextMesh Pro
+/Assets/Textures_Materials
