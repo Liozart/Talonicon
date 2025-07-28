@@ -1,4 +1,5 @@
 using StarterAssets;
+using System;
 using System.Collections;
 using System.Linq;
 using TMPro;
@@ -86,8 +87,14 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    bool isCollisionProcessed = false;
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        if (isCollisionProcessed)
+            return;
+
+        isCollisionProcessed = true;
+
         if (hit.transform.CompareTag("Coin"))
         {
             inventory.UpdateCoins(hit.gameObject.GetComponent<Coin>().amount);
@@ -110,6 +117,7 @@ public class PlayerManager : MonoBehaviour
                 Destroy(hit.gameObject);
             }
         }
+        StartCoroutine(IsCollisionProcessed());
     }
 
     public void WeaponDamage(Enemy enemy)
@@ -145,12 +153,28 @@ public class PlayerManager : MonoBehaviour
                 moodManager.ChangeMood(Mood.Sad, true);
             }
         }
+    }
 
+    public void Heal(int v)
+    {
+        health += v;
+        if (health > maxHealth)
+        {
+            health = maxHealth;
+            moodManager.ChangeMoodForTime(Mood.Happy, 3f);
+        }
+        UpdateHealthText();
     }
 
     public void UpdateHealthText()
     {
         Text_HP.text = $"{health}/{maxHealth}";
         Image_HP.sizeDelta = new Vector2(Image_HPMaxWidth / maxHealth * health, Image_HP.sizeDelta.y);
+    }
+
+    IEnumerator IsCollisionProcessed()
+    {
+        yield return new WaitForEndOfFrame();
+        isCollisionProcessed = false;
     }
 }

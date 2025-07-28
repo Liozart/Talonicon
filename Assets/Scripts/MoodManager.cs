@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,6 +48,7 @@ public class MoodManager : MonoBehaviour
     {
         if (force)
         {
+            StopAllCoroutines();
             SetMoodImage(moo);
             currentMood = moo;
         }
@@ -68,6 +70,23 @@ public class MoodManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ChangeMoodForTime(Mood moo, float time)
+    {
+        StopAllCoroutines();
+        StartCoroutine(ChangeMoodForTimeCO(moo, time));
+    }
+
+    IEnumerator ChangeMoodForTimeCO(Mood moo, float time)
+    {
+        Mood oldMood = currentMood;
+        currentMood = moo;
+        SetMoodImage(moo);
+        yield return new WaitForSeconds(time);
+        currentMood = oldMood;
+        SetMoodImage(currentMood);
+
     }
 
     public void SetMoodImage(Mood moo)

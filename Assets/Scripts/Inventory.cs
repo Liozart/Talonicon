@@ -20,11 +20,16 @@ public class Inventory : MonoBehaviour
     public bool isOpen;
     public InventoryPage currentPage;
 
+    [Header("UI inventory")]
     public TMP_Text text_Coins;
     public TMP_Text text_ItemTitle;
     public TMP_Text text_ItemDescription;
     public Button button_use;
     public TMP_Text text_button_use;
+
+    [Header("UI equipments")]
+    public Button button_equipmentWeapon;
+    public Button button_equipmentArmor;
 
     public Dictionary<ItemType, int> items = new Dictionary<ItemType, int>();
     public List<WeaponType> weapons = new List<WeaponType>();
@@ -81,6 +86,12 @@ public class Inventory : MonoBehaviour
             DrawInventoryPage(currentPage);
         }
         //Item effect
+        switch (it)
+        {
+            case ItemType.HealthPotion:
+                playerManager.Heal(3);
+                break;
+        }
     }
 
     public void EquipWeapon(WeaponType wep)
@@ -101,6 +112,8 @@ public class Inventory : MonoBehaviour
         audioSource.Play();
         //Change active weapon collider 
         weaponManager.SetWeaponCollider(weaponsData.weaponsColliders[equippedWeapon]);
+        //Update equipment UI
+        button_equipmentWeapon.image.sprite = weaponsData.weaponSprites[equippedWeapon];
     }
 
     public void ToggleInventory()
