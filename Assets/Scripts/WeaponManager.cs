@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public enum WeaponWhoosh
@@ -7,7 +8,11 @@ public enum WeaponWhoosh
 
 public class WeaponManager : MonoBehaviour
 {
+    public float damageCooldownMax;
+    public float damageCooldown;
+
     PlayerManager playerManager;
+    Animator animator;
 
     public GameObject sliceImpact;
 
@@ -17,11 +22,38 @@ public class WeaponManager : MonoBehaviour
 
     public WeaponType equippedWeapon;
     public WhooshType equippedWeaponWhoosh;
+    
+    public Collider weaponCollider;
 
     private void Start()
     {
+        damageCooldown = 0f;
+        damageCooldownMax = WeaponsBible.WeaponsCooldowns[equippedWeapon];
+
         playerManager = GetComponentInParent<PlayerManager>();
+        animator = GetComponentInParent<Animator>();
         audioSource = GetComponent<AudioSource>();
+    }
+
+    private void Update()
+    {
+        //Damage recieved cooldown
+        if (damageCooldown >= 0)
+        {
+            damageCooldown -= Time.deltaTime;
+        }
+    }
+
+    public void Attack()
+    {
+        if (damageCooldown <= 0)
+        {
+            animator.SetTrigger("Attack");
+            damageCooldown = damageCooldownMax;
+            weaponCollider.enabled = true;
+            StartCoroutine(DisableWeaponCollider());
+            PlayWhoosh();
+        }
     }
 
     public void PlayWhoosh()
@@ -42,5 +74,16 @@ public class WeaponManager : MonoBehaviour
             playerManager.WeaponDamage(other.GetComponent<Enemy>());
             Destroy(Instantiate(sliceImpact, other.ClosestPoint(transform.position), Quaternion.identity), 0.5f);
         }
+    }
+
+    IEnumerator DisableWeaponCollider()
+    {
+        yield return new WaitForSeconds(0.2f);
+        weaponCollider.enabled = false;
+    }
+
+    public void SetWeaponCollider(Collider col)
+    {
+        weaponCollider = col;
     }
 }

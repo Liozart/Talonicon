@@ -66,7 +66,7 @@ public class Inventory : MonoBehaviour
         equippedWeapon = WeaponType.Dagger;
         AddWeapon(equippedWeapon);
         EquipWeapon(equippedWeapon);
-        playerManager.SetWeaponCollider(weaponsData.weaponsColliders[equippedWeapon]);
+        weaponManager.SetWeaponCollider(weaponsData.weaponsColliders[equippedWeapon]);
 
         DrawInventoryPage(currentPage);
     }
@@ -93,14 +93,14 @@ public class Inventory : MonoBehaviour
         equippedWeapon = wep;
         weaponsData.weaponsGameobjects[equippedWeapon].SetActive(true);
         //Change attack cooldown
-        playerManager.damageCooldownMax = WeaponsBible.WeaponsCooldowns[equippedWeapon];
+        weaponManager.damageCooldownMax = WeaponsBible.WeaponsCooldowns[equippedWeapon];
         //Set correct animation
         animator.SetInteger("Weapon", (int)equippedWeapon);
         //Play audio
         audioSource.clip = audio_equipWeapon;
         audioSource.Play();
         //Change active weapon collider 
-        playerManager.SetWeaponCollider(weaponsData.weaponsColliders[equippedWeapon]);
+        weaponManager.SetWeaponCollider(weaponsData.weaponsColliders[equippedWeapon]);
     }
 
     public void ToggleInventory()

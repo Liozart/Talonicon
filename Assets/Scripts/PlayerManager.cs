@@ -14,15 +14,12 @@ public class PlayerManager : MonoBehaviour
     [Header("Stats")]
     public int health;
     public int maxHealth;
-    public float damageCooldownMax;
-    public float damageCooldown;
 
     public int XP;
     public int level;
     public int nextLevel;
 
     public GameObject Handle;
-    public Collider weaponCollider;
 
     public Inventory inventory;
     public MoodManager moodManager;
@@ -34,7 +31,6 @@ public class PlayerManager : MonoBehaviour
     public TMP_Text Text_Death;
     int Image_HPMaxWidth = 255;
 
-    Animator animator;
     FirstPersonController firstPersonController;
     #if ENABLE_INPUT_SYSTEM
     private PlayerInput _playerInput;
@@ -48,7 +44,6 @@ public class PlayerManager : MonoBehaviour
     {
         maxHealth = 3;
         health = maxHealth;
-        damageCooldown = 0f;
 
         XP = 0;
         nextLevel = 10;
@@ -60,7 +55,6 @@ public class PlayerManager : MonoBehaviour
         UpdateHealthText();
         Text_Death.enabled = false;
 
-        animator = GetComponent<Animator>();
         firstPersonController = GetComponent<FirstPersonController>();
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<StarterAssetsInputs>();
@@ -69,19 +63,11 @@ public class PlayerManager : MonoBehaviour
 #       endif
 
         audioSource = GetComponent<AudioSource>();
-
-        damageCooldownMax = WeaponsBible.WeaponsCooldowns[inventory.equippedWeapon];
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Damage recieved cooldown
-        if (damageCooldown >= 0)
-        {
-            damageCooldown -= Time.deltaTime;
-        }
-
         //Inventory key
         if (_input.inventory)
         {
@@ -96,14 +82,7 @@ public class PlayerManager : MonoBehaviour
         //Attack key
         if (_input.attack)
         {
-            if (damageCooldown <= 0)
-            {
-                animator.SetTrigger("Attack");
-                damageCooldown = damageCooldownMax;
-                weaponCollider.enabled = true;
-                StartCoroutine(DisableWeaponCollider());
-                WeaponManager.PlayWhoosh();
-            }
+            WeaponManager.Attack();
         }
     }
 
@@ -173,16 +152,5 @@ public class PlayerManager : MonoBehaviour
     {
         Text_HP.text = $"{health}/{maxHealth}";
         Image_HP.sizeDelta = new Vector2(Image_HPMaxWidth / maxHealth * health, Image_HP.sizeDelta.y);
-    }
-
-    IEnumerator DisableWeaponCollider()
-    {
-        yield return new WaitForSeconds(0.2f);
-        weaponCollider.enabled = false;
-    }
-
-    public void SetWeaponCollider(Collider col)
-    {
-        weaponCollider = col;
     }
 }
