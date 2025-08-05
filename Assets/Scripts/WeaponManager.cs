@@ -1,11 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-public enum WeaponWhoosh
-{
-    Small
-}
-
 public class WeaponManager : MonoBehaviour
 {
     public float damageCooldownMax;
@@ -28,7 +23,7 @@ public class WeaponManager : MonoBehaviour
     private void Start()
     {
         damageCooldown = 0f;
-        damageCooldownMax = WeaponsBible.WeaponsCooldowns[equippedWeapon];
+        //damageCooldownMax = WeaponsBible.WeaponsCooldowns[equippedWeapon];
 
         playerManager = GetComponentInParent<PlayerManager>();
         animator = GetComponentInParent<Animator>();
@@ -41,7 +36,7 @@ public class WeaponManager : MonoBehaviour
         if (damageCooldown >= 0)
         {
             damageCooldown -= Time.deltaTime;
-        }
+        } 
     }
 
     public void Attack()
@@ -53,6 +48,8 @@ public class WeaponManager : MonoBehaviour
             weaponCollider.enabled = true;
             StartCoroutine(DisableWeaponCollider());
             PlayWhoosh();
+            playerManager.stamina -= WeaponsBible.weaponsStamina[equippedWeapon];
+            playerManager.UpdateStaminBar();
         }
     }
 
@@ -72,14 +69,19 @@ public class WeaponManager : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            playerManager.WeaponDamage(other.GetComponent<Enemy>());
+            playerManager.WeaponDamage(other.GetComponent<Enemy>(), WeaponsBible.WeaponsDamages[equippedWeapon]);
             Destroy(Instantiate(sliceImpact, other.ClosestPoint(transform.position), Quaternion.identity), 0.5f);
+        }
+        else
+        if (other.CompareTag("Breakable"))
+        {
+            other.GetComponent<Breakable>().Break();
         }
     }
 
     IEnumerator DisableWeaponCollider()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(WeaponsBible.WeaponsColliderEnableTimes[equippedWeapon]);
         weaponCollider.enabled = false;
     }
 

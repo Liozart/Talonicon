@@ -1,0 +1,11 @@
+- Utilisation de l'argent : 
+	- Améliorer l'arme : fer -> acier -> or (voir les spritessheets)
+	- Magasin : Potions
+
+- Détails de terrain :
+	- Herbes
+	- Caillous
+
+HUB + maps autour ?
+
+utiliser les sprites de graines et de pousses pour faire pousser des trucs dans le hub

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public enum Mood
 {
-    Normal, Happy, Angry, Nervous, Sad, Sleeping
+    Normal, Happy, Angry, Nervous, Sad, Sleeping, Dead
 }
 
 public class MoodManager : MonoBehaviour
@@ -16,11 +16,11 @@ public class MoodManager : MonoBehaviour
     public Sprite Image_Portait_Nervous;
     public Sprite Image_Portait_Sad;
     public Sprite Image_Portait_Sleeping;
+    public Sprite Image_Portait_Dead;
 
     public Mood currentMood;
-
-    float attackCoolDown = 0f;
-    float attackCoolDownMax = 4f;
+    public Mood timedMood;
+    bool isMoodTimed = false;
 
     void Start()
     {
@@ -30,18 +30,6 @@ public class MoodManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (attackCoolDown > 0f)
-        {
-            attackCoolDown -= Time.deltaTime;
-        }
-        else
-        {
-            if (currentMood == Mood.Angry)
-            {
-                SetMoodImage(Mood.Normal);
-                currentMood = Mood.Normal;
-            }
-        }
     }
 
     public void ChangeMood(Mood moo, bool force)
@@ -59,16 +47,25 @@ public class MoodManager : MonoBehaviour
                 switch (currentMood)
                 {
                     case Mood.Angry:
-                        attackCoolDown = attackCoolDownMax;
+                        timedMood = Mood.Angry;
+                        isMoodTimed = true;
                         break;
                     case Mood.Normal:
-                        attackCoolDown = attackCoolDownMax;
+                        timedMood = Mood.Angry;
                         SetMoodImage(moo);
-                        currentMood = moo;
+                        isMoodTimed = true;
                         break;
-                    //Sad : still sad
+                    default:
+                        currentMood = moo;
+                        if (!isMoodTimed)
+                        {
+                            SetMoodImage(moo);
+                        }
+                        break;
                 }
             }
+            SetMoodImage(moo);
+            currentMood = moo;
         }
     }
 
@@ -80,12 +77,12 @@ public class MoodManager : MonoBehaviour
 
     IEnumerator ChangeMoodForTimeCO(Mood moo, float time)
     {
-        Mood oldMood = currentMood;
-        currentMood = moo;
         SetMoodImage(moo);
+        isMoodTimed = true;
+        timedMood = moo;
         yield return new WaitForSeconds(time);
-        currentMood = oldMood;
         SetMoodImage(currentMood);
+        isMoodTimed = false;
 
     }
 
@@ -110,6 +107,9 @@ public class MoodManager : MonoBehaviour
                 break;
             case Mood.Sleeping:
                 Image_Portait.sprite = Image_Portait_Sleeping;
+                break;
+            case Mood.Dead:
+                Image_Portait.sprite = Image_Portait_Dead;
                 break;
         }
     }
